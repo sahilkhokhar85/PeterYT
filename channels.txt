@@ -1,7 +1,2 @@
-# Har line me ek channel. Teeno format chalenge:
-#   @handle
-#   channel URL
-#   UC... channel id
-# File edit karne ke baad bot restart nahi karna, agle check me apne aap utha lega.
-
-@MrBeast
+# OPTIONAL. Channels ab Telegram bot se add hote hain (/add, /remove, /list).
+# Yahan likhoge to bot start hone par ek baar import kar lega (@handle / link / UC id).
