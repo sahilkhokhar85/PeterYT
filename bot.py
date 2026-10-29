@@ -30,7 +30,11 @@ CHANNELS_FILE = os.path.join(BASE, "channels.txt")  # optional: sirf pehli baar 
 STATE_FILE = os.path.join(BASE, "state.json")
 
 NS = {"a": "http://www.w3.org/2005/Atom", "yt": "http://www.youtube.com/xml/schemas/2015"}
-HEADERS = {"User-Agent": "Mozilla/5.0", "Cookie": "CONSENT=YES+1; SOCS=CAI"}
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Cookie": "CONSENT=PENDING+987; SOCS=CAESEwgDEgk0ODE3Nzk3MjQaAmVuIAEaBgiA_LyaBg",
+}
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("ytbot")
@@ -82,12 +86,16 @@ def resolve_channel_id(entry):
             url = f"https://www.youtube.com/{entry}"
         elif not entry.startswith("http"):
             url = f"https://www.youtube.com/@{entry}"
+        url = re.sub(r"^https?://(m\.|music\.)?youtube\.com", "https://www.youtube.com", url)
         r = requests.get(url, headers=HEADERS, timeout=20)
         r.raise_for_status()
+        t = r.text
+        # Sirf is page ke apne channel ke tags lo (page me dusre channels ke id bhi hote hain!)
         m = (
-            re.search(r'"channelId":"(UC[\w-]{22})"', r.text)
-            or re.search(r"channel_id=(UC[\w-]{22})", r.text)
-            or re.search(r"youtube\.com/channel/(UC[\w-]{22})", r.text)
+            re.search(r'rel="canonical" href="https://www\.youtube\.com/channel/(UC[\w-]{22})', t)
+            or re.search(r'type="application/rss\+xml"[^>]*channel_id=(UC[\w-]{22})', t)
+            or re.search(r'itemprop="(?:channelId|identifier)" content="(UC[\w-]{22})"', t)
+            or re.search(r'"externalId":"(UC[\w-]{22})"', t)
         )
         if not m:
             raise ValueError(f"channel id nahi mila: {entry}")
