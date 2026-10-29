@@ -1,0 +1,7 @@
+# Har line me ek channel. Teeno format chalenge:
+#   @handle
+#   channel URL
+#   UC... channel id
+# File edit karne ke baad bot restart nahi karna, agle check me apne aap utha lega.
+
+@MrBeast
